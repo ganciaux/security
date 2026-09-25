@@ -1,0 +1,18 @@
+# Dépendances Node (réinstallées par Docker au build)
+node_modules/
+
+# Certificats et clés TLS (générés localement avec mkcert, ne jamais les versionner)
+*.pem
+*.key
+*.crt
+certs/
+
+# Captures réseau et fichiers d'environnement
+*.pcap
+*.pcapng
+.env
+
+# Système / éditeur
+.DS_Store
+Thumbs.db
+.vscode/

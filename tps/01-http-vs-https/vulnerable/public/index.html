@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>TP 01 - Connexion</title>
+</head>
+<body>
+  <h1>Connexion</h1>
+  <!-- Méthode POST : les données partent dans le corps de la requête, pas dans l'URL -->
+  <form method="POST" action="/login">
+    <p>
+      <label for="login">Identifiant</label>
+      <input id="login" name="login" type="text">
+    </p>
+    <p>
+      <label for="motDePasse">Mot de passe</label>
+      <input id="motDePasse" name="motDePasse" type="password">
+    </p>
+    <button type="submit">Se connecter</button>
+  </form>
+  <p><small>Compte de test : alice / Soleil-2026</small></p>
+</body>
+</html>

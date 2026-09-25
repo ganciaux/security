@@ -1,0 +1,28 @@
+# TP 01 : HTTP contre HTTPS
+# Démarrage : docker compose up --build
+# Arrêt     : docker compose down -v
+
+services:
+  # Application de connexion, servie en HTTP (sans TLS)
+  app:
+    build: ./vulnerable
+    ports:
+      # Publié sur 127.0.0.1 uniquement : jamais accessible depuis le réseau
+      - "127.0.0.1:8080:3000"
+    networks:
+      - labo
+
+  # "Espion" réseau : il partage la carte réseau du conteneur app
+  # et affiche tout ce qui passe sur le port 3000.
+  sniffer:
+    build: ./sniffer
+    network_mode: "service:app"   # même interface réseau que app
+    cap_add:
+      - NET_RAW                   # droit nécessaire pour capturer des paquets
+      - NET_ADMIN
+    depends_on:
+      - app
+
+networks:
+  labo:
+    driver: bridge
