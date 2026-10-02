@@ -18,8 +18,10 @@ app.use(express.static('public'));
 
 // Traitement de la connexion
 app.post('/login', (req, res) => {
+  console.log("/login route: start")
   const { login, motDePasse } = req.body;
-
+  console.log(req.body)
+  console.log("/login route: after body")
   if (login === UTILISATEUR.login && motDePasse === UTILISATEUR.motDePasse) {
     res.send(`<p>Bienvenue ${UTILISATEUR.login} !</p><a href="/">Retour</a>`);
   } else {

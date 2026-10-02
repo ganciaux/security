@@ -1,0 +1,44 @@
+# TP 01 : version corrigée, l'app est servie en HTTPS derrière Nginx
+# À lancer depuis ce dossier (corrige/) :
+#   docker compose up --build -d
+#   docker compose down -v
+
+services:
+  # Même application que la version vulnérable : son code ne change pas
+  app:
+    build: ../vulnerable
+    # Pas de "ports" : l'app n'est plus joignable directement depuis l'hôte,
+    # on ne peut l'atteindre qu'en passant par Nginx.
+    networks:
+      - labo
+
+  # Reverse proxy : termine TLS puis transmet les requêtes à l'app
+  nginx:
+    image: nginx:1.27-alpine
+    ports:
+      - "127.0.0.1:443:443"
+    volumes:
+      # Ta configuration (à écrire dans nginx/default.conf)
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+      # Certificat et clé générés par mkcert, en lecture seule
+      - ./certs:/etc/nginx/certs:ro
+    depends_on:
+      - app
+    networks:
+      - labo
+
+  # Même "espion" qu'avant, mais branché sur Nginx et le port 443
+  sniffer:
+    build: ../sniffer
+    network_mode: "service:nginx"
+    cap_add:
+      - NET_RAW
+      - NET_ADMIN
+    command: ["tcpdump", "-i", "any", "-A", "-l", "-nn",
+              "tcp port 443 and (((ip[2:2] - ((ip[0]&0xf)<<2)) - ((tcp[12]&0xf0)>>2)) != 0)"]
+    depends_on:
+      - nginx
+
+networks:
+  labo:
+    driver: bridge
